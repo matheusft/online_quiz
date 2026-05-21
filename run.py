@@ -42,6 +42,9 @@ if __name__ == "__main__":
     cfg = app.config["APP_CONFIG"]
     port = cfg.app.port
     free_port(port)
+    print(f"\n  Admin  →  http://localhost:{port}/admin")
+    print(f"  Student → http://localhost:{port}/student")
+    print(f"\n  Press Ctrl+C to stop.\n")
     socketio.run(
         app,
         host=cfg.app.host,
