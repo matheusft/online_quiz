@@ -45,8 +45,14 @@ const qrModal   = document.getElementById("qr-modal");
 const closeModal = document.getElementById("close-modal");
 const qrUrlText = document.getElementById("qr-url-text");
 
+const presBtn      = document.getElementById("pres-btn");
+const presCountBar = document.getElementById("pres-count-bar");
+const presAnswered = document.getElementById("pres-answered");
+const presOnline   = document.getElementById("pres-online");
+
 // ── App state ─────────────────────────────────────────
-let currentState = null;
+let currentState     = null;
+let presentationMode = false;
 
 // ── Auth ──────────────────────────────────────────────
 function attemptAuth() {
@@ -93,6 +99,33 @@ qrModal.addEventListener("click", (e) => {
   if (e.target === qrModal) qrModal.classList.add("hidden");
 });
 
+// ── Presentation Mode ─────────────────────────────────
+presBtn.addEventListener("click", () => {
+  presentationMode = !presentationMode;
+  document.body.classList.toggle("presentation", presentationMode);
+  presBtn.classList.toggle("btn-ghost", !presentationMode);
+  presBtn.classList.toggle("btn-pres-on", presentationMode);
+  presBtn.title = presentationMode ? "Exit Presentation Mode" : "Presentation Mode";
+
+  if (!currentState) return;
+
+  if (currentState.answer_revealed) return; // reveal view is fine in both modes
+
+  if (presentationMode) {
+    // Hide per-option bars, show count bar instead
+    resultsPanel.classList.add("hidden");
+    presCountBar.classList.remove("hidden");
+  } else {
+    // Restore live bars
+    presCountBar.classList.add("hidden");
+    if (currentState.live_counts && currentState.status !== "idle") {
+      renderLiveBars(currentState.live_counts);
+    } else {
+      resultsPanel.classList.add("hidden");
+    }
+  }
+});
+
 // ── Socket events ─────────────────────────────────────
 socket.on("quiz_state", (state) => applyState(state));
 
@@ -131,6 +164,7 @@ socket.on("answer_hidden", () => {
     resultsPanel.classList.add("hidden");
     revealBtn.classList.remove("hidden");
     hideBtn.classList.add("hidden");
+    if (presentationMode) presCountBar.classList.remove("hidden");
   }
 });
 
@@ -155,10 +189,19 @@ function applyState(state) {
     revealBtn.classList.add("hidden");
     hideBtn.classList.remove("hidden");
   } else if (state.live_counts && state.status !== "idle") {
-    renderLiveBars(state.live_counts);
+    if (presentationMode) {
+      presAnswered.textContent = state.live_counts.total_answers || 0;
+      presOnline.textContent   = state.students_online || 0;
+      presCountBar.classList.remove("hidden");
+      resultsPanel.classList.add("hidden");
+    } else {
+      presCountBar.classList.add("hidden");
+      renderLiveBars(state.live_counts);
+    }
     revealBtn.classList.remove("hidden");
     hideBtn.classList.add("hidden");
   } else {
+    presCountBar.classList.add("hidden");
     resultsPanel.classList.add("hidden");
     revealBtn.classList.remove("hidden");
     hideBtn.classList.add("hidden");
@@ -253,11 +296,25 @@ function updateLiveCounts(data) {
   responseRateFill.style.width  = pct + "%";
   responseRateLabel.textContent = `${pct}% responded`;
 
-  if (currentState) currentState.students_online = online;
+  // Always keep presentation count bar in sync
+  presAnswered.textContent = total;
+  presOnline.textContent   = online;
+
+  if (currentState) {
+    currentState.students_online = online;
+    currentState.live_counts = data;
+  }
 
   // Show live per-option bars during active quiz (before reveal)
   if (currentState && !currentState.answer_revealed) {
-    renderLiveBars(data);
+    if (presentationMode) {
+      // In presentation mode: show count bar only, no per-option breakdown
+      presCountBar.classList.remove("hidden");
+      resultsPanel.classList.add("hidden");
+    } else {
+      presCountBar.classList.add("hidden");
+      renderLiveBars(data);
+    }
   }
 }
 
@@ -319,6 +376,7 @@ function renderLiveBars(data) {
 }
 
 function renderRevealedResults(data) {
+  presCountBar.classList.add("hidden");
   resultsBars.innerHTML = "";
   freeResponsesList.innerHTML = "";
 
