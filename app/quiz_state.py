@@ -167,6 +167,7 @@ def next_question():
         if _state["current_question_index"] < len(_questions) - 1:
             _state["current_question_index"] += 1
             _state["answer_revealed"] = False
+            _state["status"] = "active"
             _reset_answers_for_current_unlocked()
             return True
         return False
@@ -177,6 +178,7 @@ def prev_question():
         if _state["current_question_index"] > 0:
             _state["current_question_index"] -= 1
             _state["answer_revealed"] = False
+            _state["status"] = "active"
             _reset_answers_for_current_unlocked()
             return True
         return False
