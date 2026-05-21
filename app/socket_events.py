@@ -54,6 +54,7 @@ def on_disconnect():
     qs.remove_student(sid)
     leave_room("admin")
     _emit_live_counts()
+    _broadcast_student_stats()
 
 
 # ---------------------------------------------------------------------------
@@ -99,6 +100,7 @@ def on_next_question():
     if moved:
         _broadcast_question_to_students()
         _emit_state_to_admin()
+        _broadcast_student_stats()
 
 
 @socketio.on("prev_question")
@@ -107,6 +109,7 @@ def on_prev_question():
     if moved:
         _broadcast_question_to_students()
         _emit_state_to_admin()
+        _broadcast_student_stats()
 
 
 @socketio.on("reveal_answer")
@@ -145,5 +148,6 @@ def on_submit_answer(data):
     if recorded:
         emit("answer_accepted", {"question_id": question_id})
         _emit_live_counts()
+        _broadcast_student_stats()
     else:
         emit("answer_rejected", {"question_id": question_id})

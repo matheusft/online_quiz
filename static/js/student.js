@@ -7,7 +7,10 @@
 const socket = io({ transports: ["websocket", "polling"] });
 
 // ── DOM refs ──────────────────────────────────────────
-const connDot = document.getElementById("connection-dot");
+const connDot      = document.getElementById("connection-dot");
+const statsBar     = document.getElementById("stats-bar");
+const statsOnline  = document.getElementById("stats-online");
+const statsAnswered = document.getElementById("stats-answered");
 
 const views = {
   waiting:   document.getElementById("view-waiting"),
@@ -96,11 +99,16 @@ socket.on("quiz_reset", () => {
   waitingTitle.textContent = "Quiz has been reset";
   waitingSub.textContent = "Waiting for the instructor to restart…";
   progressFooter.classList.add("hidden");
+  statsBar.classList.add("hidden");
 });
 
 socket.on("answer_accepted", () => {
-  // Already handled optimistically, but confirm the submission banner
   submittedBanner.classList.remove("hidden");
+});
+
+socket.on("student_stats", ({ students_online, total_answers }) => {
+  statsOnline.textContent   = students_online ?? 0;
+  statsAnswered.textContent = total_answers ?? 0;
 });
 
 // ── State application ─────────────────────────────────
@@ -119,8 +127,11 @@ function applyState(state) {
     waitingTitle.textContent = "Waiting for the quiz to start…";
     waitingSub.textContent = "Your instructor will begin shortly";
     progressFooter.classList.add("hidden");
+    statsBar.classList.add("hidden");
     return;
   }
+
+  statsBar.classList.remove("hidden");
 
   if (question) {
     lastKnownQuestion = question;
