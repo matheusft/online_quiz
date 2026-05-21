@@ -1,48 +1,271 @@
 questions:
+
+  # ── Computing & CS Theory ──────────────────────────────────────────────────
+
   - id: 1
     type: multiple_choice
-    text: "What is the capital of France?"
+    text: "According to Amdahl's Law, the maximum speedup when a fraction $f = 0.80$ of a program is parallelised over $p \\to \\infty$ processors is $S = \\dfrac{1}{1 - f}$. What is $S$?"
     options:
-      - "Berlin"
-      - "Madrid"
-      - "Paris"
-      - "Rome"
-    correct: 2
+      - "$S = 4$"
+      - "$S = 5$"
+      - "$S = 8$"
+      - "$S = 10$"
+    correct: 1
 
   - id: 2
     type: multiple_choice
-    text: "Which data structure uses LIFO (Last In, First Out) ordering?"
+    text: "Which of the following decision problems is proven to be NP-complete?"
     options:
-      - "Queue"
-      - "Stack"
-      - "Linked List"
-      - "Hash Map"
-    correct: 1
+      - "Sorting $n$ integers (comparison-based)"
+      - "Finding the shortest path between two nodes in a weighted DAG"
+      - "The Boolean Satisfiability Problem (3-SAT)"
+      - "Computing the greatest common divisor of two integers"
+    correct: 2
 
   - id: 3
-    type: multiple_choice
-    text: "What does HTTP stand for?"
+    type: true_false
+    text: "Every problem in NP is also NP-complete."
     options:
-      - "HyperText Transfer Protocol"
-      - "High Transfer Text Protocol"
-      - "HyperText Transmission Process"
-      - "Hyper Transfer Technology Protocol"
-    correct: 0
+      - "True"
+      - "False"
+    correct: 1
 
   - id: 4
     type: free_text
-    text: "In your own words, what is photosynthesis?"
+    text: "Explain the difference between a process and a thread. Address memory sharing, creation overhead, and how failure in one affects the other."
+
+  # ── Computer Architecture ──────────────────────────────────────────────────
 
   - id: 5
     type: multiple_choice
-    text: "What is the time complexity of binary search?"
+    text: "A CPU has an L1 cache with hit time $t_1 = 2\\,\\text{ns}$ and hit rate $h = 0.90$. Main memory access time is $t_m = 100\\,\\text{ns}$. The average memory access time is $\\text{AMAT} = h\\, t_1 + (1-h)\\, t_m$. What is AMAT?"
     options:
-      - "O(n)"
-      - "O(n²)"
-      - "O(log n)"
-      - "O(1)"
-    correct: 2
+      - "$11.8\\,\\text{ns}$"
+      - "$12.0\\,\\text{ns}$"
+      - "$51.0\\,\\text{ns}$"
+      - "$91.8\\,\\text{ns}$"
+    correct: 0
 
   - id: 6
+    type: multiple_choice
+    text: "A 5-stage pipeline (IF, ID, EX, MEM, WB) runs at 1 GHz. For every 10 instructions there are 3 data-hazard stalls and 2 control-hazard stalls. What is the effective CPI?"
+    options:
+      - "$\\text{CPI} = 1.0$"
+      - "$\\text{CPI} = 1.3$"
+      - "$\\text{CPI} = 1.5$"
+      - "$\\text{CPI} = 2.0$"
+    correct: 2
+
+  - id: 7
+    type: true_false
+    text: "Increasing the number of pipeline stages always increases instruction throughput, regardless of hazards and pipeline overhead."
+    options:
+      - "True"
+      - "False"
+    correct: 1
+
+  # ── Electronics ────────────────────────────────────────────────────────────
+
+  - id: 8
+    type: multiple_choice
+    text: "A series RC circuit is driven by a step $V_s$. The capacitor voltage is $v_C(t) = V_s\\bigl(1 - e^{-t/\\tau}\\bigr)$ with $\\tau = RC$. After exactly one time constant, $v_C$ is approximately what percentage of $V_s$?"
+    options:
+      - "50 %"
+      - "63 %"
+      - "86 %"
+      - "99 %"
+    correct: 1
+
+  - id: 9
+    type: multiple_choice
+    text: "An inverting op-amp amplifier has $R_f = 47\\,\\text{k}\\Omega$ and $R_{\\text{in}} = 10\\,\\text{k}\\Omega$. The closed-loop gain is $A_v = -R_f / R_{\\text{in}}$. What is $A_v$?"
+    options:
+      - "$A_v = -0.21$"
+      - "$A_v = -4.7$"
+      - "$A_v = +4.7$"
+      - "$A_v = -47$"
+    correct: 1
+
+  - id: 10
+    type: true_false
+    text: "In CMOS digital logic, static (quiescent) power dissipation dominates over dynamic switching power at high clock frequencies."
+    options:
+      - "True"
+      - "False"
+    correct: 1
+
+  # ── Parallel Programming ───────────────────────────────────────────────────
+
+  - id: 11
+    type: multiple_choice
+    text: "Thread A and Thread B both read a shared counter (value 5), each increment it to 6, and each write 6 back. The expected value after both threads finish is 7. This error is an instance of which concurrency problem?"
+    options:
+      - "Deadlock"
+      - "Priority inversion"
+      - "Race condition"
+      - "Memory leak"
+    correct: 2
+
+  - id: 12
+    type: multiple_choice
+    text: "A GPU executes the same shader program on thousands of pixel fragments simultaneously, each with its own data. According to Flynn's taxonomy, this architecture is classified as:"
+    options:
+      - "SISD — Single Instruction, Single Data"
+      - "MISD — Multiple Instruction, Single Data"
+      - "SIMD — Single Instruction, Multiple Data"
+      - "MIMD — Multiple Instruction, Multiple Data"
+    correct: 2
+
+  - id: 13
+    type: true_false
+    text: "A binary semaphore and a mutex are always interchangeable in every concurrent programming scenario."
+    options:
+      - "True"
+      - "False"
+    correct: 1
+
+  - id: 14
     type: free_text
-    text: "What is one real-world application of machine learning you find most interesting?"
+    text: "Explain what a race condition is. Give a short pseudocode example that exhibits one, and name two synchronisation mechanisms that can prevent it."
+
+  # ── Embedded Systems ───────────────────────────────────────────────────────
+
+  - id: 15
+    type: multiple_choice
+    text: "A 12-bit ADC has reference voltage $V_{\\text{ref}} = 3.3\\,\\text{V}$. Resolution is $\\Delta = V_{\\text{ref}} / 2^{N}$. For an input of $1.65\\,\\text{V}$ (exactly half of $V_{\\text{ref}}$), what is the expected digital output code?"
+    options:
+      - "512"
+      - "1024"
+      - "2048"
+      - "4095"
+    correct: 2
+
+  - id: 16
+    type: multiple_choice
+    text: "In a bare-metal embedded system, which of the following does NOT contribute to interrupt latency?"
+    options:
+      - "Interrupt controller priority arbitration time"
+      - "Pipeline flush when branching to the ISR"
+      - "The configured baud rate of a UART peripheral"
+      - "Register context-save instructions at ISR entry"
+    correct: 2
+
+  - id: 17
+    type: true_false
+    text: "Declaring a variable as $\\texttt{volatile}$ in C/C++ prevents the compiler from caching it in a register and forces every read/write to go through memory."
+    options:
+      - "True"
+      - "False"
+    correct: 0
+
+  - id: 18
+    type: free_text
+    text: "What is the role of an Interrupt Service Routine (ISR) in an embedded system? Describe two best practices for writing ISRs and explain why each matters."
+
+  # ── Data Science ───────────────────────────────────────────────────────────
+
+  - id: 19
+    type: multiple_choice
+    text: "A disease affects 1% of the population. A test has 99% sensitivity $P(+|D)$ and 95% specificity $P(-|\\neg D)$. By Bayes' theorem, $P(D|+) = \\dfrac{P(+|D)\\,P(D)}{P(+|D)\\,P(D)+P(+|\\neg D)\\,P(\\neg D)}$. Approximately what is $P(D|+)$?"
+    options:
+      - "About 1 %"
+      - "About 17 %"
+      - "About 50 %"
+      - "About 99 %"
+    correct: 1
+
+  - id: 20
+    type: multiple_choice
+    text: "The binary cross-entropy loss is $\\mathcal{L} = -\\bigl[y\\log\\hat{y} + (1-y)\\log(1-\\hat{y})\\bigr]$. For true label $y=1$ and predicted probability $\\hat{y}=0.9$, what is $\\mathcal{L}$ (to 2 d.p.)?"
+    options:
+      - "$\\mathcal{L} \\approx 0.05$"
+      - "$\\mathcal{L} \\approx 0.11$"
+      - "$\\mathcal{L} \\approx 0.46$"
+      - "$\\mathcal{L} \\approx 1.00$"
+    correct: 1
+
+  - id: 21
+    type: true_false
+    text: "The Pearson correlation coefficient can capture non-linear monotonic relationships between two continuous variables."
+    options:
+      - "True"
+      - "False"
+    correct: 1
+
+  - id: 22
+    type: free_text
+    text: "Explain the difference between L1 (Lasso) and L2 (Ridge) regularisation. Discuss how each penalises model weights and what effect this has on sparsity of the solution."
+
+  # ── Control Systems ────────────────────────────────────────────────────────
+
+  - id: 23
+    type: multiple_choice
+    text: "The closed-loop characteristic polynomial of a system is $p(s) = s^3 + 6s^2 + 11s + 6$. Applying the Routh–Hurwitz criterion, all first-column elements are positive. What does this imply?"
+    options:
+      - "The system has at least one right-half-plane pole and is unstable"
+      - "The system is marginally stable with poles on the imaginary axis"
+      - "All poles lie in the left half-plane; the system is asymptotically stable"
+      - "The criterion is inconclusive for third-order polynomials"
+    correct: 2
+
+  - id: 24
+    type: multiple_choice
+    text: "In the PID control law $u(t) = K_p\\,e(t) + K_i\\!\\int_0^t\\!e(\\tau)\\,d\\tau + K_d\\,\\dot{e}(t)$, which term is solely responsible for eliminating steady-state error for a constant step reference input?"
+    options:
+      - "Proportional term $K_p e(t)$"
+      - "Integral term $K_i \\int e\\,dt$"
+      - "Derivative term $K_d \\dot{e}(t)$"
+      - "The proportional and derivative terms together"
+    correct: 1
+
+  - id: 25
+    type: true_false
+    text: "A properly tuned PID controller guarantees closed-loop asymptotic stability for any linear time-invariant plant."
+    options:
+      - "True"
+      - "False"
+    correct: 1
+
+  # ── AI & Machine Learning ──────────────────────────────────────────────────
+
+  - id: 26
+    type: multiple_choice
+    text: "During backpropagation the weight update uses $w \\leftarrow w - \\eta\\,\\dfrac{\\partial \\mathcal{L}}{\\partial w}$. A 2D convolutional layer receives a $32 \\times 32$ input, uses a $5 \\times 5$ kernel, no padding, and stride 1. The output size per channel is $\\left\\lfloor \\dfrac{W - F + 2P}{S} \\right\\rfloor + 1$. What is the spatial output size?"
+    options:
+      - "$30 \\times 30$"
+      - "$28 \\times 28$"
+      - "$27 \\times 27$"
+      - "$32 \\times 32$"
+    correct: 1
+
+  - id: 27
+    type: multiple_choice
+    text: "A decision tree is grown until every leaf contains exactly one training sample (zero training error). On the test set its accuracy is much lower. Which concept best explains this?"
+    options:
+      - "Underfitting — the model has too high a bias"
+      - "Overfitting — the model has too high a variance"
+      - "Label noise in the test set"
+      - "Class imbalance in the training set"
+    correct: 1
+
+  - id: 28
+    type: true_false
+    text: "SVMs with a fixed kernel function always converge to the global optimum because the dual optimisation problem is strictly convex."
+    options:
+      - "True"
+      - "False"
+    correct: 0
+
+  - id: 29
+    type: multiple_choice
+    text: "Which activation function is defined as $\\sigma(z) = \\dfrac{1}{1 + e^{-z}}$ and is most commonly used in the output layer of a binary classifier?"
+    options:
+      - "ReLU: $\\max(0, z)$"
+      - "Sigmoid: $\\dfrac{1}{1+e^{-z}}$"
+      - "Tanh: $\\dfrac{e^z - e^{-z}}{e^z + e^{-z}}$"
+      - "Softmax: $\\dfrac{e^{z_i}}{\\sum_j e^{z_j}}$"
+    correct: 1
+
+  - id: 30
+    type: free_text
+    text: "What is the role of an activation function in a neural network? What would happen if every activation were replaced by the identity $f(x) = x$? Name two common non-linear activations and state their formulas."
