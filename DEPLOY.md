@@ -35,34 +35,35 @@ git push -u origin main
 
 In the Render dashboard under **Environment**, add:
 
-| Key | Value |
-|---|---|
-| `PYTHON_VERSION` | `3.11.0` |
+| Key | Value | Notes |
+|---|---|---|
+| `PYTHON_VERSION` | `3.11.0` | auto-set via `render.yaml` |
+| `SECRET_KEY` | a long random string | generate with `python3 -c "import secrets; print(secrets.token_hex(32))"` |
+| `MASTER_CODE` | your admin password | the code required to unlock the admin panel |
+| `QR_PUBLIC_URL` | `https://YOUR-APP-NAME.onrender.com/student` | auto-set via `render.yaml` if using the known URL |
 
-> These are already declared in `render.yaml` and will be set automatically on first deploy.
+> `SECRET_KEY` and `MASTER_CODE` are declared as `sync: false` in `render.yaml`, meaning Render will prompt you to set them but will never store them in the repo.
+
+The app will **refuse to start** if `SECRET_KEY` is not set.
 
 ---
 
-## 4. Update `config/config.yaml` Before Deploying
+## 4. Update `config/config.yaml` if Needed
+
+Only non-secret values live in `config.yaml`:
 
 ```yaml
 app:
-  secret_key: "replace-with-a-long-random-string"
+  port: 8085            # local dev port, ignored on Render
 
 quiz:
-  master_code: "your-secure-admin-password"
+  master_code: "123"    # overridden by MASTER_CODE env var in production
 
 qr:
-  public_url: "https://YOUR-APP-NAME.onrender.com/student"
+  public_url: "https://online-quiz-9gez.onrender.com/student"  # overridden by QR_PUBLIC_URL
 ```
 
-Commit and push the updated config:
-
-```bash
-git add config/config.yaml
-git commit -m "config: set production secret key and QR URL"
-git push
-```
+Do **not** add `secret_key` here — it must come from the environment.
 
 ---
 

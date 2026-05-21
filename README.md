@@ -18,7 +18,7 @@ A real-time interactive quiz platform for live lecture settings. A presenter con
 | Layer | Technology |
 |---|---|
 | Backend | Python, Flask, Flask-SocketIO |
-| Real-time | Socket.IO (`threading` mode + `simple-websocket`) |
+| Real-time | Socket.IO (`gevent` mode + geventwebsocket) |
 | Frontend | Vanilla HTML / CSS / JS |
 | Config | `config/config.yaml` via Munch |
 | QR codes | `qrcode[pil]` |
@@ -51,10 +51,21 @@ A real-time interactive quiz platform for live lecture settings. A presenter con
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+```
+
+Create a `.env` file in the project root (never committed):
+
+```bash
+SECRET_KEY=your-long-random-secret-key-here
+```
+
+Then start the server:
+
+```bash
 python run.py
 ```
 
-Open `http://localhost:8081/admin` for the presenter panel and `http://localhost:8081/student` for the student view.
+Open `http://localhost:<port>/admin` for the presenter panel and `http://localhost:<port>/student` for the student view. The port is set in `config/config.yaml`.
 
 ## Configuration
 
@@ -62,15 +73,16 @@ Edit `config/config.yaml` before running:
 
 ```yaml
 app:
-  secret_key: "a-strong-random-secret"
-  port: 8081
+  port: 8085
 
 quiz:
   master_code: "your-admin-password"
 
 qr:
-  public_url: "https://online-quiz-9gez.onrender.com"
+  public_url: "https://online-quiz-9gez.onrender.com/student"
 ```
+
+`SECRET_KEY` is intentionally absent from `config.yaml` — it must be set via the environment (`.env` locally, dashboard env var on Render).
 
 ## Questions Format
 
