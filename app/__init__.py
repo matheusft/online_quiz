@@ -1,9 +1,11 @@
 import os
 from flask import Flask
 from flask_socketio import SocketIO
+from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()  # loads .env when running locally; no-op if file is absent
+# Resolve .env from the project root regardless of the working directory.
+load_dotenv(Path(__file__).parent.parent / ".env")
 
 from .utils import load_config, load_questions
 from . import quiz_state as qs
