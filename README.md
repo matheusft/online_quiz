@@ -5,7 +5,8 @@ A real-time interactive quiz platform for live lecture settings. A presenter con
 ## Features
 
 - Real-time answer submission and live result bars via WebSockets
-- Multiple choice and free-text question types
+- Multiple choice, true/false, and free-text question types
+- LaTeX rendering in question text and answer options via KaTeX
 - Students can change their answer any time before reveal
 - Duplicate free-text responses are collapsed with a count badge
 - Live online/answered counters visible to both admin and students
@@ -97,9 +98,25 @@ questions:
     correct: 2          # zero-based index
 
   - id: 2
+    type: true_false
+    text: "The Earth orbits the Sun."
+    options: ["True", "False"]
+    correct: 0
+
+  - id: 3
     type: free_text
     text: "Explain photosynthesis in your own words."
 ```
+
+**Supported types:**
+
+| Type | `correct` field | Notes |
+|------|----------------|-------|
+| `multiple_choice` | zero-based index | 2–6 options |
+| `true_false` | `0` (True) or `1` (False) | options must be `["True", "False"]` |
+| `free_text` | omit | responses displayed after reveal |
+
+**LaTeX** is supported in `text` and `options` fields using KaTeX. Use `$...$` for inline math and `$$...$$` for display math. In YAML, backslashes must be doubled: `\\frac`, `\\sqrt`, etc.
 
 ## Deploying to Render
 
