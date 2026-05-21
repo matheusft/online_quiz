@@ -189,27 +189,35 @@ function updateQuestion(q, idx, total, showCorrect = false) {
   }
 
   questionCounter.textContent   = `Question ${idx + 1} / ${total}`;
-  questionTypeLabel.textContent = q.type === "multiple_choice" ? "Multiple Choice" : "Free Text";
+  const typeLabels = { multiple_choice: "Multiple Choice", true_false: "True / False", free_text: "Free Text" };
+  questionTypeLabel.textContent = typeLabels[q.type] || q.type;
   questionText.textContent      = q.text;
 
-  if (q.type === "multiple_choice") {
+  const isMC = q.type === "multiple_choice" || q.type === "true_false";
+  if (isMC) {
     freetextPlaceholder.classList.add("hidden");
     optionsList.classList.remove("hidden");
     optionsList.innerHTML = "";
-    const letters = ["A", "B", "C", "D", "E", "F"];
+    const letters = q.type === "true_false" ? ["", ""] : ["A", "B", "C", "D", "E", "F"];
     q.options.forEach((opt, i) => {
       const li = document.createElement("li");
-      li.className = "option-item";
+      li.className = "option-item" + (q.type === "true_false" ? " tf-option" : "");
       if (showCorrect && q.correct !== undefined && q.correct === i) {
         li.classList.add("correct");
       }
-      li.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${escapeHtml(opt)}</span>`;
+      if (q.type === "true_false") {
+        li.innerHTML = `<span>${escapeHtml(opt)}</span>`;
+      } else {
+        li.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${escapeHtml(opt)}</span>`;
+      }
       optionsList.appendChild(li);
     });
   } else {
     optionsList.classList.add("hidden");
     freetextPlaceholder.classList.remove("hidden");
   }
+
+  renderMath(document.getElementById("question-card"));
 }
 
 function updateCounters(online) {
@@ -246,7 +254,7 @@ function renderRevealedResults(data) {
   resultsBars.innerHTML = "";
   freeResponsesList.innerHTML = "";
 
-  if (data.question_type === "multiple_choice" || data.counts !== undefined) {
+  if (data.question_type === "multiple_choice" || data.question_type === "true_false" || data.counts !== undefined) {
     freeResponsesList.classList.add("hidden");
     resultsBars.classList.remove("hidden");
 
@@ -295,9 +303,24 @@ function renderRevealedResults(data) {
 
   resultsPanel.classList.remove("hidden");
   resultsPanel.closest(".question-panel").classList.add("revealed");
+  renderMath(resultsPanel);
 }
 
 // ── Helpers ───────────────────────────────────────────
+const KATEX_OPTS = {
+  delimiters: [
+    { left: "$$", right: "$$", display: true  },
+    { left: "$",  right: "$",  display: false },
+  ],
+  throwOnError: false,
+};
+
+function renderMath(el) {
+  if (el && typeof renderMathInElement !== "undefined") {
+    renderMathInElement(el, KATEX_OPTS);
+  }
+}
+
 function escapeHtml(str) {
   return String(str)
     .replace(/&/g, "&amp;")
