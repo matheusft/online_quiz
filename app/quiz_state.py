@@ -8,6 +8,9 @@ from collections import Counter
 
 _lock = threading.Lock()
 
+# Question types that behave like multiple-choice (indexed answers, dict bucket)
+_MC_TYPES = ("multiple_choice", "true_false")
+
 # --- State ---
 _state = {
     "current_question_index": 0,
@@ -63,7 +66,7 @@ def get_answers_for_current():
     q = get_current_question(include_correct=True)
     if q is None:
         return {}
-    return _state["answers"].get(q["id"], {} if q["type"] == "multiple_choice" else [])
+    return _state["answers"].get(q["id"], {} if q["type"] in _MC_TYPES else [])
 
 
 def get_students_online():
@@ -127,8 +130,8 @@ def get_student_stats() -> dict:
 
 def _build_live_counts(q):
     qid = q["id"]
-    raw = _state["answers"].get(qid, {} if q["type"] == "multiple_choice" else [])
-    if q["type"] == "multiple_choice":
+    raw = _state["answers"].get(qid, {} if q["type"] in _MC_TYPES else [])
+    if q["type"] in _MC_TYPES:
         # JSON only supports string keys — convert so JS can look up by index
         counts_str = {str(k): v for k, v in raw.items()} if raw else {}
         total = sum(raw.values()) if raw else 0
@@ -137,7 +140,7 @@ def _build_live_counts(q):
             "counts": counts_str,
             "total_answers": total,
             "students_online": get_students_online(),
-            "question_type": "multiple_choice",
+            "question_type": q["type"],
         }
     else:
         aggregated = _aggregate_free_text(raw)
@@ -152,7 +155,7 @@ def _build_live_counts(q):
 
 def _build_reveal_data(q):
     data = _build_live_counts(q)
-    if q["type"] == "multiple_choice":
+    if q["type"] in _MC_TYPES:
         data["correct"] = q.get("correct")
     return data
 
@@ -252,7 +255,7 @@ def record_answer(question_id, answer, sid):
         if q is None:
             return False
 
-        if q["type"] == "multiple_choice":
+        if q["type"] in _MC_TYPES:
             bucket = _state["answers"].setdefault(question_id, {})
             prev_sessions = _state["answered_sessions"].get(question_id, {})
 
@@ -288,5 +291,5 @@ def _reset_answers_for_current_unlocked():
     if idx < len(_questions):
         qid = _questions[idx]["id"]
         q = _questions[idx]
-        _state["answers"][qid] = {} if q["type"] == "multiple_choice" else []
+        _state["answers"][qid] = {} if q["type"] in _MC_TYPES else []
         _state["answered_sessions"].pop(qid, None)
