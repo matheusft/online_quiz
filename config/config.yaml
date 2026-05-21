@@ -2,10 +2,10 @@ app:
   secret_key: "change_me_in_production"
   debug: false
   host: "0.0.0.0"
-  port: 8080
+  port: 8081
 
 quiz:
-  master_code: "lecture2024"
+  master_code: "123"
   questions_file: "data/questions.yaml"
 
 qr:
