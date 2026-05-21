@@ -1,5 +1,5 @@
 /* ======================================================
-   Admin Panel — Light Theme
+   Admin Panel — Light Theme (compact desktop layout)
    ====================================================== */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -22,30 +22,38 @@
   --warning: #f59e0b;
   --shadow-sm: 0 1px 2px rgba(0,0,0,.06);
   --shadow: 0 4px 16px rgba(0,0,0,.08);
-  --radius: 12px;
-  --radius-sm: 8px;
+  --radius: 10px;
+  --radius-sm: 7px;
   --transition: 0.2s ease;
+  --header-h: 50px;
 }
 
+/* Lock html/body to viewport — no page-level scroll */
 html, body {
   height: 100%;
+  overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background: var(--bg);
   color: var(--text);
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.5;
 }
 
 /* ── Auth Screen ─────────────────────────────────────── */
-.screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+.screen {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 .auth-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 48px 40px;
+  border-radius: 18px;
+  padding: 40px 36px;
   width: 100%;
-  max-width: 400px;
+  max-width: 380px;
   box-shadow: var(--shadow);
   text-align: center;
 }
@@ -53,43 +61,43 @@ html, body {
 .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   font-weight: 700;
-  font-size: 18px;
+  font-size: 17px;
   color: var(--text);
   justify-content: center;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
-.auth-card h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
-.auth-card .subtitle { color: var(--text-muted); margin-bottom: 28px; }
+.auth-card h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+.auth-card .subtitle { color: var(--text-muted); margin-bottom: 24px; font-size: 14px; }
 
 .input-group { display: flex; gap: 8px; }
 .input-group input {
   flex: 1;
-  padding: 10px 14px;
+  padding: 9px 12px;
   border: 1.5px solid var(--border);
   border-radius: var(--radius-sm);
-  font-size: 15px;
+  font-size: 14px;
   outline: none;
   transition: border-color var(--transition);
 }
 .input-group input:focus { border-color: var(--primary); }
 
-.error-msg { color: var(--danger); font-size: 13px; margin-top: 12px; }
+.error-msg { color: var(--danger); font-size: 13px; margin-top: 10px; }
 
 /* ── Buttons ─────────────────────────────────────────── */
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 9px 16px;
+  gap: 5px;
+  padding: 7px 13px;
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   border: none;
-  transition: background var(--transition), transform 0.1s ease, opacity var(--transition);
+  transition: background var(--transition), transform 0.1s ease;
   text-decoration: none;
   white-space: nowrap;
 }
@@ -110,166 +118,162 @@ html, body {
 .btn-ghost     { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
 .btn-ghost:hover { background: #f1f5f9; color: var(--text); }
 
-.btn-block { width: 100%; justify-content: center; padding: 11px 16px; }
+.btn-block { width: 100%; justify-content: center; padding: 8px 13px; }
 
-.btn-icon {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
+.btn-icon { display: inline-flex; align-items: center; gap: 5px; }
 
 .btn-icon-only {
-  padding: 6px;
+  padding: 5px;
   border: none;
   background: none;
   color: var(--text-muted);
 }
-.btn-icon-only:hover { color: var(--text); background: #f1f5f9; }
+.btn-icon-only:hover { color: var(--text); background: #f1f5f9; border-radius: var(--radius-sm); }
 
 /* ── Badges ──────────────────────────────────────────── */
 .badge {
   display: inline-block;
-  padding: 3px 10px;
+  padding: 2px 8px;
   border-radius: 99px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
-.badge-idle { background: #f1f5f9; color: var(--text-muted); }
-.badge-active { background: #dcfce7; color: #16a34a; }
-.badge-paused { background: #fef9c3; color: #ca8a04; }
+.badge-idle     { background: #f1f5f9; color: var(--text-muted); }
+.badge-active   { background: #dcfce7; color: #16a34a; }
+.badge-paused   { background: #fef9c3; color: #ca8a04; }
 .badge-revealing { background: #dbeafe; color: #2563eb; }
 
-/* ── Control Panel Layout ────────────────────────────── */
+/* ── Control Panel — fixed-height shell ──────────────── */
 #control-panel {
+  height: 100vh;
+  overflow: hidden;
   flex-direction: column;
   align-items: stretch;
   padding: 0;
-  min-height: 100vh;
+  display: flex;
 }
 
 .panel-header {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
-  padding: 0 28px;
-  height: 60px;
+  padding: 0 20px;
+  height: var(--header-h);
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
   box-shadow: var(--shadow-sm);
+  z-index: 100;
 }
 
 .header-left, .header-right {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 
-.header-left .logo { margin-bottom: 0; justify-content: flex-start; font-size: 16px; }
+.header-left .logo { margin-bottom: 0; justify-content: flex-start; font-size: 15px; }
 
 .stat-chip {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: 13px;
 }
 
+/* Two-column body that fills remaining height exactly */
 .panel-body {
   display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 0;
-  min-height: calc(100vh - 60px);
+  grid-template-columns: 1fr 268px;
+  height: calc(100vh - var(--header-h));
+  overflow: hidden;
 }
 
-/* ── Question Panel (left) ───────────────────────────── */
+/* ── Question Panel (left) — scrolls independently ───── */
 .question-panel {
-  padding: 32px;
+  padding: 18px 22px;
   border-right: 1px solid var(--border);
   overflow-y: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.question-nav {
-  margin-bottom: 20px;
-}
+.question-nav { /* no extra margin needed — gap handles it */ }
 
 .counter {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
 }
 
 .question-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 28px 32px;
-  margin-bottom: 24px;
+  padding: 16px 18px;
   box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
 }
 
 .type-label {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--primary);
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .question-card h2 {
-  font-size: 22px;
+  font-size: 17px;
   font-weight: 600;
   line-height: 1.4;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   color: var(--text);
 }
 
-/* Options list in question card */
-.options-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.options-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
 
 .option-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
+  gap: 10px;
+  padding: 7px 12px;
   border: 1.5px solid var(--border);
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .option-letter {
-  width: 26px; height: 26px;
-  border-radius: 6px;
+  width: 22px; height: 22px;
+  border-radius: 5px;
   background: var(--primary-light);
   color: var(--primary);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
 
-.option-item.correct {
-  border-color: var(--success);
-  background: #f0fdf4;
-}
+.option-item.correct { border-color: var(--success); background: #f0fdf4; }
 .option-item.correct .option-letter { background: #dcfce7; color: #16a34a; }
 
 .freetext-hint {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 16px;
+  padding: 12px;
   background: #f8fafc;
   border-radius: var(--radius-sm);
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 /* ── Results Panel ───────────────────────────────────── */
@@ -277,20 +281,21 @@ html, body {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 24px;
+  padding: 14px 16px;
   box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
 }
 
-.results-panel h3 { font-size: 15px; font-weight: 600; margin-bottom: 16px; }
+.results-panel h3 { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
 
-.results-bars { display: flex; flex-direction: column; gap: 10px; }
+.results-bars { display: flex; flex-direction: column; gap: 7px; }
 
-.result-row { display: flex; flex-direction: column; gap: 4px; }
+.result-row { display: flex; flex-direction: column; gap: 3px; }
 
 .result-label {
   display: flex;
   justify-content: space-between;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
 }
 
@@ -298,7 +303,7 @@ html, body {
 .result-label .count-val { color: var(--text-muted); }
 
 .bar-track {
-  height: 10px;
+  height: 8px;
   background: #f1f5f9;
   border-radius: 99px;
   overflow: hidden;
@@ -316,8 +321,8 @@ html, body {
 .free-responses-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  max-height: 300px;
+  gap: 6px;
+  max-height: 220px;
   overflow-y: auto;
 }
 
@@ -325,11 +330,11 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  padding: 8px 12px;
+  gap: 8px;
+  padding: 6px 10px;
   background: var(--primary-light);
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text);
   line-height: 1.4;
   animation: fadeIn 0.3s ease;
@@ -339,70 +344,71 @@ html, body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 24px;
-  height: 24px;
-  padding: 0 7px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
   background: var(--primary);
   color: #fff;
   border-radius: 99px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   flex-shrink: 0;
 }
 
-@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
 
-/* ── Controls Panel (right) ──────────────────────────── */
+/* ── Controls Panel (right) — scrolls independently ─── */
 .controls-panel {
-  padding: 24px 20px;
+  padding: 12px;
   overflow-y: auto;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 8px;
 }
 
 .control-group {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 18px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 7px;
   box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
 }
 
 .group-title {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.07em;
   color: var(--text-muted);
-  margin-bottom: 2px;
+  margin-bottom: 1px;
 }
 
-.nav-row { display: flex; gap: 8px; }
+.nav-row { display: flex; gap: 6px; }
 .nav-row .btn { flex: 1; justify-content: center; }
 
 /* Stats */
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
 .stat-box {
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 12px;
+  padding: 8px;
   text-align: center;
 }
-.stat-value { font-size: 28px; font-weight: 700; color: var(--primary); line-height: 1; }
-.stat-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; }
+.stat-value { font-size: 22px; font-weight: 700; color: var(--primary); line-height: 1; }
+.stat-label { font-size: 10px; color: var(--text-muted); margin-top: 3px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; }
 
 .response-rate-bar {
-  height: 8px;
+  height: 6px;
   background: #f1f5f9;
   border-radius: 99px;
   overflow: hidden;
-  margin-top: 4px;
 }
 .response-rate-fill {
   height: 100%;
@@ -410,7 +416,7 @@ html, body {
   border-radius: 99px;
   transition: width 0.4s ease;
 }
-.rate-label { font-size: 12px; color: var(--text-muted); text-align: center; }
+.rate-label { font-size: 11px; color: var(--text-muted); text-align: center; }
 
 /* ── QR Modal ────────────────────────────────────────── */
 .modal-overlay {
@@ -427,10 +433,10 @@ html, body {
 
 .modal {
   background: var(--surface);
-  border-radius: 20px;
-  padding: 28px;
+  border-radius: 18px;
+  padding: 24px;
   width: 100%;
-  max-width: 380px;
+  max-width: 340px;
   box-shadow: 0 20px 60px rgba(0,0,0,.2);
   text-align: center;
 }
@@ -439,30 +445,32 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
-.modal-header h3 { font-size: 18px; font-weight: 600; }
+.modal-header h3 { font-size: 16px; font-weight: 600; }
 
 .qr-image {
-  width: 240px;
-  height: 240px;
-  border-radius: 12px;
-  margin: 0 auto 16px;
+  width: 220px;
+  height: 220px;
+  border-radius: 10px;
+  margin: 0 auto 12px;
   display: block;
   border: 4px solid var(--primary-light);
 }
 
-.qr-url {
-  font-size: 13px;
-  color: var(--text-muted);
-  word-break: break-all;
-}
+.qr-url { font-size: 12px; color: var(--text-muted); word-break: break-all; }
 
 /* ── Utility ─────────────────────────────────────────── */
 .hidden { display: none !important; }
 
-@media (max-width: 768px) {
-  .panel-body { grid-template-columns: 1fr; }
-  .controls-panel { border-top: 1px solid var(--border); }
-  .question-panel { padding: 20px; border-right: none; }
+@media (max-width: 860px) {
+  .panel-body { grid-template-columns: 1fr 240px; }
+}
+
+@media (max-width: 640px) {
+  html, body { overflow: auto; }
+  #control-panel { height: auto; overflow: visible; }
+  .panel-body { grid-template-columns: 1fr; height: auto; overflow: visible; }
+  .question-panel { height: auto; overflow: visible; border-right: none; border-bottom: 1px solid var(--border); }
+  .controls-panel { height: auto; overflow: visible; }
 }
