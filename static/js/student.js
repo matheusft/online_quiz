@@ -204,14 +204,14 @@ function showAnsweredState(q, idx, total) {
   if (q.type === "multiple_choice") {
     ftInput.classList.add("hidden");
     mcOptions.classList.remove("hidden");
+    // Keep buttons active — student can still change answer before reveal
     renderMcOptions(q, myAnswers[q.id]);
-    disableMcOptions();
   } else {
     mcOptions.classList.add("hidden");
     ftInput.classList.remove("hidden");
     ftTextarea.value = myAnswers[q.id] || "";
-    ftSubmit.disabled = true;
-    ftTextarea.disabled = true;
+    ftTextarea.disabled = false;
+    ftSubmit.disabled = false;
   }
 
   submittedBanner.classList.remove("hidden");
@@ -237,15 +237,15 @@ function disableMcOptions() {
 }
 
 function onMcSelect(questionId, optionIndex) {
-  if (answeredQuestions.has(questionId)) return;
+  // Allow changing answer before reveal — clicking same option deselects
+  const prev = myAnswers[questionId];
+  if (prev === optionIndex) return; // tapped same option, no-op
 
-  answeredQuestions.add(questionId);
   myAnswers[questionId] = optionIndex;
+  answeredQuestions.add(questionId);
 
-  // Highlight selected
   mcOptions.querySelectorAll(".mc-option").forEach((b, i) => {
     b.classList.toggle("selected", i === optionIndex);
-    b.disabled = true;
   });
   submittedBanner.classList.remove("hidden");
 
@@ -256,18 +256,17 @@ function onMcSelect(questionId, optionIndex) {
 ftTextarea.addEventListener("input", () => {
   const len = ftTextarea.value.length;
   ftCharCount.textContent = `${len} / 500`;
+  // Re-enable submit if there's text and answer can still be changed
+  ftSubmit.disabled = len === 0;
 });
 
 ftSubmit.addEventListener("click", () => {
   const text = ftTextarea.value.trim();
   if (!text) return;
-  if (answeredQuestions.has(currentQuestionId)) return;
 
-  answeredQuestions.add(currentQuestionId);
   myAnswers[currentQuestionId] = text;
+  answeredQuestions.add(currentQuestionId);
 
-  ftSubmit.disabled    = true;
-  ftTextarea.disabled  = true;
   submittedBanner.classList.remove("hidden");
 
   socket.emit("submit_answer", { question_id: currentQuestionId, answer: text });

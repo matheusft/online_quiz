@@ -73,7 +73,7 @@ def is_answer_revealed():
 
 
 def has_student_answered(question_id, sid):
-    return sid in _state["answered_sessions"].get(question_id, set())
+    return sid in _state["answered_sessions"].get(question_id, {})
 
 
 def get_full_state_snapshot(for_admin=False):
@@ -198,29 +198,42 @@ def hide_answer():
 
 def record_answer(question_id, answer, sid):
     """
-    Record an answer. Returns False if already answered or quiz not active.
-    answer is an int (MC option index) or a string (free text).
+    Record or update an answer. Students may change their answer before reveal.
+    Returns False if quiz is not active.
     """
     with _lock:
         if _state["status"] not in ("active",):
             return False
 
-        # Prevent re-submission
-        if sid in _state["answered_sessions"].get(question_id, set()):
-            return False
-
-        _state["answered_sessions"].setdefault(question_id, set()).add(sid)
-
-        # Find question type
         q = next((x for x in _questions if x["id"] == question_id), None)
         if q is None:
             return False
 
         if q["type"] == "multiple_choice":
             bucket = _state["answers"].setdefault(question_id, {})
+            prev_sessions = _state["answered_sessions"].get(question_id, {})
+
+            # If student already answered, decrement old option count
+            if sid in prev_sessions:
+                old_answer = prev_sessions[sid]
+                if old_answer == answer:
+                    return False  # same option clicked, no change
+                if old_answer in bucket and bucket[old_answer] > 0:
+                    bucket[old_answer] -= 1
+
+            _state["answered_sessions"].setdefault(question_id, {})[sid] = answer
             bucket[answer] = bucket.get(answer, 0) + 1
         else:
+            # Free text: just replace the previous response
             bucket = _state["answers"].setdefault(question_id, [])
+            prev_sessions = _state["answered_sessions"].get(question_id, {})
+            if sid in prev_sessions:
+                old_text = prev_sessions[sid]
+                try:
+                    bucket.remove(old_text)
+                except ValueError:
+                    pass
+            _state["answered_sessions"].setdefault(question_id, {})[sid] = str(answer)
             bucket.append(str(answer))
 
         return True
