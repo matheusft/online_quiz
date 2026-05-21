@@ -4,6 +4,7 @@ No database — state resets on server restart.
 """
 
 import threading
+from collections import Counter
 
 _lock = threading.Lock()
 
@@ -94,29 +95,61 @@ def get_full_state_snapshot(for_admin=False):
     return snap
 
 
+def _aggregate_free_text(raw: list) -> list:
+    """
+    Collapse duplicate free-text answers (case-insensitive, stripped).
+    Returns list of {text, count} sorted by count descending.
+    Preserves the casing of the first occurrence of each unique answer.
+    """
+    first_seen: dict = {}   # normalised -> display text
+    counts: Counter = Counter()
+    for r in raw:
+        normalised = r.strip().lower()
+        if normalised not in first_seen:
+            first_seen[normalised] = r.strip()
+        counts[normalised] += 1
+    return [
+        {"text": first_seen[k], "count": v}
+        for k, v in counts.most_common()
+    ]
+
+
+def get_student_stats() -> dict:
+    """Minimal stats safe to broadcast to all students (no answer breakdown)."""
+    q = get_current_question(include_correct=False)
+    if q is None:
+        return {"students_online": get_students_online(), "total_answers": 0}
+    # Count unique sessions that have submitted for this question
+    total = len(_state["answered_sessions"].get(q["id"], {}))
+    return {"students_online": get_students_online(), "total_answers": total}
+
+
 def _build_live_counts(q):
     qid = q["id"]
     raw = _state["answers"].get(qid, {} if q["type"] == "multiple_choice" else [])
     if q["type"] == "multiple_choice":
+        # JSON only supports string keys — convert so JS can look up by index
+        counts_str = {str(k): v for k, v in raw.items()} if raw else {}
         total = sum(raw.values()) if raw else 0
         return {
             "question_id": qid,
-            "counts": raw,
+            "counts": counts_str,
             "total_answers": total,
             "students_online": get_students_online(),
+            "question_type": "multiple_choice",
         }
     else:
+        aggregated = _aggregate_free_text(raw)
         return {
             "question_id": qid,
-            "responses": list(raw) if raw else [],
+            "responses": aggregated,
             "total_answers": len(raw) if raw else 0,
             "students_online": get_students_online(),
+            "question_type": "free_text",
         }
 
 
 def _build_reveal_data(q):
-    qid = q["id"]
-    raw = _state["answers"].get(qid, {} if q["type"] == "multiple_choice" else [])
     data = _build_live_counts(q)
     if q["type"] == "multiple_choice":
         data["correct"] = q.get("correct")
