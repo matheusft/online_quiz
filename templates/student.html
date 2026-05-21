@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Live Quiz</title>
+  <link rel="stylesheet" href="/static/css/student.css" />
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo">
+        <svg width="24" height="24" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="12" fill="#6366f1"/>
+          <path d="M12 20l6 6 10-12" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>LiveQuiz</span>
+      </div>
+      <div id="connection-dot" class="connection-dot disconnected" title="Disconnected"></div>
+    </header>
+
+    <!-- Main content area — only one view visible at a time -->
+    <main class="main-content">
+
+      <!-- Waiting screen -->
+      <div id="view-waiting" class="view active">
+        <div class="waiting-illustration">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+            <circle cx="40" cy="40" r="36" stroke="#e0e7ff" stroke-width="4"/>
+            <circle cx="40" cy="40" r="24" stroke="#c7d2fe" stroke-width="4"/>
+            <circle cx="40" cy="40" r="8" fill="#6366f1"/>
+            <circle cx="40" cy="40" r="8" fill="#6366f1" class="pulse-ring"/>
+          </svg>
+        </div>
+        <h2 id="waiting-title">Waiting for the quiz to start…</h2>
+        <p id="waiting-sub" class="subtitle">Your instructor will begin shortly</p>
+      </div>
+
+      <!-- Active question screen -->
+      <div id="view-question" class="view hidden">
+        <div class="question-header">
+          <span id="q-counter" class="q-counter"></span>
+          <span id="q-type-badge" class="q-type-badge"></span>
+        </div>
+        <h2 id="q-text" class="q-text"></h2>
+
+        <!-- Multiple choice options -->
+        <div id="mc-options" class="mc-options hidden"></div>
+
+        <!-- Free text input -->
+        <div id="ft-input" class="ft-input hidden">
+          <textarea id="ft-textarea" placeholder="Type your answer here…" rows="4" maxlength="500"></textarea>
+          <div class="ft-footer">
+            <span id="ft-char-count" class="char-count">0 / 500</span>
+            <button id="ft-submit" class="btn btn-primary">Submit</button>
+          </div>
+        </div>
+
+        <!-- Submitted confirmation -->
+        <div id="submitted-banner" class="submitted-banner hidden">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20,6 9,17 4,12"/>
+          </svg>
+          Answer submitted — waiting for reveal
+        </div>
+      </div>
+
+      <!-- Reveal screen (MC) -->
+      <div id="view-reveal-mc" class="view hidden">
+        <div class="question-header">
+          <span id="rv-counter" class="q-counter"></span>
+        </div>
+        <h2 id="rv-text" class="q-text"></h2>
+        <div id="rv-options" class="rv-options"></div>
+        <div id="rv-your-answer" class="your-answer-note hidden"></div>
+      </div>
+
+      <!-- Reveal screen (Free text) -->
+      <div id="view-reveal-ft" class="view hidden">
+        <h2 id="rvft-text" class="q-text"></h2>
+        <div class="ft-results-header">
+          <span id="rvft-count" class="response-count"></span>
+        </div>
+        <ul id="rvft-list" class="ft-responses-list"></ul>
+      </div>
+
+      <!-- Paused screen -->
+      <div id="view-paused" class="view hidden">
+        <div class="paused-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="#94a3b8">
+            <rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>
+          </svg>
+        </div>
+        <h2>Quiz Paused</h2>
+        <p class="subtitle">Stand by…</p>
+      </div>
+
+    </main>
+
+    <!-- Footer progress bar -->
+    <footer class="app-footer hidden" id="progress-footer">
+      <div id="progress-bar" class="progress-bar">
+        <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+      </div>
+      <span id="progress-label" class="progress-label"></span>
+    </footer>
+
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+  <script src="/static/js/student.js"></script>
+</body>
+</html>
