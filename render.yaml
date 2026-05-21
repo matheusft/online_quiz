@@ -7,3 +7,9 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
+      - key: SECRET_KEY
+        sync: false
+      - key: MASTER_CODE
+        sync: false
+      - key: QR_PUBLIC_URL
+        value: "https://online-quiz-9gez.onrender.com/student"
