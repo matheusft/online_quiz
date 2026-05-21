@@ -336,7 +336,7 @@ function renderRevealedResults(data) {
     const letters = ["A", "B", "C", "D", "E", "F"];
 
     options.forEach((opt, i) => {
-      const cnt = counts[i] || 0;
+      const cnt = counts[String(i)] || 0;
       const pct = total > 0 ? Math.round((cnt / total) * 100) : 0;
       const isCorrect = correct !== undefined && correct === i;
 
@@ -364,7 +364,11 @@ function renderRevealedResults(data) {
       responses.forEach((r) => {
         const chip = document.createElement("div");
         chip.className = "free-response-chip";
-        chip.textContent = r;
+        if (r && typeof r === "object") {
+          chip.innerHTML = `<span>${escapeHtml(r.text)}</span>${r.count > 1 ? `<span class="chip-count">${r.count}</span>` : ""}`;
+        } else {
+          chip.textContent = r;
+        }
         freeResponsesList.appendChild(chip);
       });
     }

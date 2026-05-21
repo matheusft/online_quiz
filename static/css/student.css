@@ -424,6 +424,23 @@ html, body {
   animation: slideUp 0.3s ease both;
 }
 
+.ft-resp-text { flex: 1; }
+
+.ft-resp-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 8px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
 /* ── Paused ──────────────────────────────────────────── */
 .paused-icon { margin-bottom: 20px; }
 #view-paused h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; text-align: center; }

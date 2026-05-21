@@ -288,7 +288,8 @@ function showReveal(data) {
   if (data.question_type === "free_text" || data.responses !== undefined) {
     showView("revealFT");
     rvftText.textContent = lastKnownQuestion?.text || "";
-    rvftCount.textContent = `${data.total_answers || 0} response${data.total_answers !== 1 ? "s" : ""}`;
+    const total = data.total_answers || 0;
+    rvftCount.textContent = `${total} response${total !== 1 ? "s" : ""}`;
 
     rvftList.innerHTML = "";
     const responses = data.responses || [];
@@ -300,8 +301,13 @@ function showReveal(data) {
     } else {
       responses.forEach((r, i) => {
         const li = document.createElement("li");
-        li.textContent = r;
         li.style.animationDelay = `${i * 40}ms`;
+        // r is either {text, count} (aggregated) or a plain string (legacy)
+        if (r && typeof r === "object") {
+          li.innerHTML = `<span class="ft-resp-text">${escapeHtml(r.text)}</span>${r.count > 1 ? `<span class="ft-resp-count">${r.count}</span>` : ""}`;
+        } else {
+          li.textContent = r;
+        }
         rvftList.appendChild(li);
       });
     }
