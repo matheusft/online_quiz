@@ -4,7 +4,6 @@ monkey.patch_all()
 
 import os
 import signal
-import subprocess
 import time
 
 from app import create_app, socketio
@@ -12,25 +11,27 @@ from app import create_app, socketio
 
 def free_port(port: int):
     """Kill any process currently listening on the given port and wait for release."""
+    import socket as _sock
     try:
-        result = subprocess.run(
-            ["lsof", "-ti", f":{port}"],
-            capture_output=True, text=True
-        )
-        pids = [p for p in result.stdout.strip().split() if p]
+        # os.popen avoids subprocess deadlocks under gevent monkey-patching
+        raw = os.popen(f"lsof -ti :{port}").read()
+        pids = [p for p in raw.strip().split() if p]
         if not pids:
             return
         for pid in pids:
             os.kill(int(pid), signal.SIGKILL)
             print(f"Killed process {pid} occupying port {port}")
-        for _ in range(30):
+        # Poll with a socket bind — more reliable than a second lsof call
+        for _ in range(50):
             time.sleep(0.1)
-            check = subprocess.run(
-                ["lsof", "-ti", f":{port}"],
-                capture_output=True, text=True
-            )
-            if not check.stdout.strip():
+            try:
+                s = _sock.socket(_sock.AF_INET, _sock.SOCK_STREAM)
+                s.setsockopt(_sock.SOL_SOCKET, _sock.SO_REUSEADDR, 1)
+                s.bind(("0.0.0.0", port))
+                s.close()
                 break
+            except OSError:
+                pass
     except Exception:
         pass
 
