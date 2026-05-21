@@ -1,6 +1,9 @@
 import os
 from flask import Flask
 from flask_socketio import SocketIO
+from dotenv import load_dotenv
+
+load_dotenv()  # loads .env when running locally; no-op if file is absent
 
 from .utils import load_config, load_questions
 from . import quiz_state as qs
@@ -25,9 +28,11 @@ def create_app(config_path: str = None) -> Flask:
 
     config = load_config(config_path)
 
-    # Environment variables take precedence over config file values.
-    # Set SECRET_KEY, MASTER_CODE, and QR_PUBLIC_URL in the Render dashboard.
-    secret_key = os.environ.get("SECRET_KEY") or config.app.secret_key
+    # SECRET_KEY must come from the environment (.env locally, dashboard on Render).
+    secret_key = os.environ.get("SECRET_KEY")
+    if not secret_key:
+        raise RuntimeError("SECRET_KEY environment variable is not set")
+
     if os.environ.get("MASTER_CODE"):
         config.quiz.master_code = os.environ["MASTER_CODE"]
     if os.environ.get("QR_PUBLIC_URL"):
