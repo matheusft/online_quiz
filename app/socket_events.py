@@ -29,24 +29,13 @@ def _emit_live_counts():
     q = qs.get_current_question(include_correct=True)
     if q is None:
         return
-    qid = q["id"]
-    raw = qs.get_answers_for_current()
-    if q["type"] == "multiple_choice":
-        total = sum(raw.values()) if raw else 0
-        payload = {
-            "question_id": qid,
-            "counts": raw,
-            "total_answers": total,
-            "students_online": qs.get_students_online(),
-        }
-    else:
-        payload = {
-            "question_id": qid,
-            "responses": list(raw) if raw else [],
-            "total_answers": len(raw) if raw else 0,
-            "students_online": qs.get_students_online(),
-        }
+    payload = qs._build_live_counts(q)
     emit("live_counts", payload, to="admin")
+
+
+def _broadcast_student_stats():
+    """Broadcast minimal stats (online + answered count) to all clients."""
+    emit("student_stats", qs.get_student_stats(), broadcast=True)
 
 
 @socketio.on("connect")
@@ -55,8 +44,8 @@ def on_connect():
     qs.add_student(sid)
     snap = qs.get_full_state_snapshot(for_admin=False)
     emit("quiz_state", snap)
-    # Notify admin of updated online count
     _emit_live_counts()
+    _broadcast_student_stats()
 
 
 @socketio.on("disconnect")
@@ -126,23 +115,8 @@ def on_reveal_answer():
     q = qs.get_current_question(include_correct=True)
     if q is None:
         return
-    raw = qs.get_answers_for_current()
-    if q["type"] == "multiple_choice":
-        total = sum(raw.values()) if raw else 0
-        payload = {
-            "question_id": q["id"],
-            "counts": raw,
-            "total_answers": total,
-            "correct": q.get("correct"),
-            "question_type": "multiple_choice",
-        }
-    else:
-        payload = {
-            "question_id": q["id"],
-            "responses": list(raw) if raw else [],
-            "total_answers": len(raw) if raw else 0,
-            "question_type": "free_text",
-        }
+    # Use the shared helper so keys are always strings (JSON-safe)
+    payload = qs._build_reveal_data(q)
     emit("answer_revealed", payload, broadcast=True)
     _emit_state_to_admin()
 
