@@ -2,13 +2,13 @@ app:
   secret_key: "change_me_in_production"
   debug: false
   host: "0.0.0.0"
-  port: 8081
+  port: 8084
 
 quiz:
   master_code: "123"
   questions_file: "data/questions.yaml"
 
 qr:
-  public_url: "https://your-app.onrender.com/student"
+  public_url: "https://online-quiz-9gez.onrender.com/student"
   box_size: 10
   border: 4
