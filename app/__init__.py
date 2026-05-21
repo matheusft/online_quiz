@@ -40,7 +40,7 @@ def create_app(config_path: str = None) -> Flask:
     socketio.init_app(
         app,
         cors_allowed_origins="*",
-        async_mode="threading",
+        async_mode="gevent",
     )
 
     # Register socket events

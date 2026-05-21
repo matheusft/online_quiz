@@ -1,3 +1,7 @@
+# gevent monkey-patch must happen before any other imports
+from gevent import monkey
+monkey.patch_all()
+
 import os
 import signal
 import subprocess
@@ -42,5 +46,4 @@ if __name__ == "__main__":
         host=cfg.app.host,
         port=port,
         debug=cfg.app.debug,
-        allow_unsafe_werkzeug=True,
     )
