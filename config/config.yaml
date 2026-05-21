@@ -1,0 +1,14 @@
+app:
+  secret_key: "change_me_in_production"
+  debug: false
+  host: "0.0.0.0"
+  port: 8080
+
+quiz:
+  master_code: "lecture2024"
+  questions_file: "data/questions.yaml"
+
+qr:
+  public_url: "https://your-app.onrender.com/student"
+  box_size: 10
+  border: 4
