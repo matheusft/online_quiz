@@ -14,7 +14,8 @@ _state = {
     "status": "idle",          # idle | active | paused | revealing
     "answers": {},             # question_id -> {option_index: count} or [list of strings]
     "answered_sessions": {},   # question_id -> set of session IDs
-    "students_online": set(),  # set of socket session IDs
+    "students_online": set(),  # non-admin socket session IDs
+    "admin_sessions": set(),   # admin socket session IDs (excluded from student count)
     "answer_revealed": False,
 }
 
@@ -165,9 +166,18 @@ def add_student(sid):
         _state["students_online"].add(sid)
 
 
-def remove_student(sid):
+def mark_admin(sid):
+    """Move sid from the student pool into the admin pool after successful auth."""
     with _lock:
         _state["students_online"].discard(sid)
+        _state["admin_sessions"].add(sid)
+
+
+def remove_student(sid):
+    """Remove sid from whichever pool it belongs to."""
+    with _lock:
+        _state["students_online"].discard(sid)
+        _state["admin_sessions"].discard(sid)
 
 
 def start_quiz():
