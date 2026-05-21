@@ -183,13 +183,15 @@ function renderActiveQuestion(q, idx, total) {
 
   showView("question");
 
-  qCounter.textContent  = `Question ${idx + 1} / ${total}`;
-  qTypeBadge.textContent = q.type === "multiple_choice" ? "Multiple Choice" : "Free Text";
+  const typeLabels = { multiple_choice: "Multiple Choice", true_false: "True / False", free_text: "Free Text" };
+  qCounter.textContent   = `Question ${idx + 1} / ${total}`;
+  qTypeBadge.textContent = typeLabels[q.type] || q.type;
   qText.textContent      = q.text;
 
   submittedBanner.classList.add("hidden");
 
-  if (q.type === "multiple_choice") {
+  const isMC = q.type === "multiple_choice" || q.type === "true_false";
+  if (isMC) {
     ftInput.classList.add("hidden");
     mcOptions.classList.remove("hidden");
     renderMcOptions(q);
@@ -201,18 +203,21 @@ function renderActiveQuestion(q, idx, total) {
     ftSubmit.disabled = false;
     ftTextarea.disabled = false;
   }
+
+  renderMath(views.question);
 }
 
 function showAnsweredState(q, idx, total) {
   showView("question");
-  qCounter.textContent  = `Question ${idx + 1} / ${total}`;
-  qTypeBadge.textContent = q.type === "multiple_choice" ? "Multiple Choice" : "Free Text";
+  const typeLabels = { multiple_choice: "Multiple Choice", true_false: "True / False", free_text: "Free Text" };
+  qCounter.textContent   = `Question ${idx + 1} / ${total}`;
+  qTypeBadge.textContent = typeLabels[q.type] || q.type;
   qText.textContent      = q.text;
 
-  if (q.type === "multiple_choice") {
+  const isMC = q.type === "multiple_choice" || q.type === "true_false";
+  if (isMC) {
     ftInput.classList.add("hidden");
     mcOptions.classList.remove("hidden");
-    // Keep buttons active — student can still change answer before reveal
     renderMcOptions(q, myAnswers[q.id]);
   } else {
     mcOptions.classList.add("hidden");
@@ -223,6 +228,7 @@ function showAnsweredState(q, idx, total) {
   }
 
   submittedBanner.classList.remove("hidden");
+  renderMath(views.question);
 }
 
 function renderMcOptions(q, selectedIndex) {
@@ -287,6 +293,8 @@ function showReveal(data) {
     rvftText.textContent = lastKnownQuestion?.text || "";
     const total = data.total_answers || 0;
     rvftCount.textContent = `${total} response${total !== 1 ? "s" : ""}`;
+
+    renderMath(rvftText);
 
     rvftList.innerHTML = "";
     const responses = data.responses || [];
@@ -354,6 +362,8 @@ function showReveal(data) {
       });
     });
 
+    renderMath(views.revealMC);
+
     // Your answer note
     if (myAnswer !== undefined) {
       const isCorrect = myAnswer === correct;
@@ -388,6 +398,20 @@ function updateProgress(idx, total) {
 }
 
 // ── Helpers ───────────────────────────────────────────
+const KATEX_OPTS = {
+  delimiters: [
+    { left: "$$", right: "$$", display: true  },
+    { left: "$",  right: "$",  display: false },
+  ],
+  throwOnError: false,
+};
+
+function renderMath(el) {
+  if (el && typeof renderMathInElement !== "undefined") {
+    renderMathInElement(el, KATEX_OPTS);
+  }
+}
+
 function escapeHtml(str) {
   return String(str)
     .replace(/&/g, "&amp;")
