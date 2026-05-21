@@ -30,13 +30,13 @@ def create_app(config_path: str = None) -> Flask:
 
     config = load_config(config_path)
 
-    # SECRET_KEY must come from the environment (.env locally, dashboard on Render).
+    # SECRET_KEY and MASTER_CODE must come from the environment (.env locally, dashboard on Render).
     secret_key = os.environ.get("SECRET_KEY")
     if not secret_key:
         raise RuntimeError("SECRET_KEY environment variable is not set")
 
-    if os.environ.get("MASTER_CODE"):
-        config.quiz.master_code = os.environ["MASTER_CODE"]
+    config.quiz.master_code = os.environ.get("MASTER_CODE", "password")
+
     if os.environ.get("QR_PUBLIC_URL"):
         config.qr.public_url = os.environ["QR_PUBLIC_URL"]
 

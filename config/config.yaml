@@ -4,7 +4,6 @@ app:
   port: 8089
 
 quiz:
-  master_code: "123"
   questions_file: "data/questions.yaml"
 
 qr:

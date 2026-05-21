@@ -58,6 +58,7 @@ Create a `.env` file in the project root (never committed):
 
 ```bash
 SECRET_KEY=your-long-random-secret-key-here
+MASTER_CODE=your-admin-password
 ```
 
 Then start the server:
@@ -76,14 +77,11 @@ Edit `config/config.yaml` before running:
 app:
   port: 8085
 
-quiz:
-  master_code: "your-admin-password"
-
 qr:
   public_url: "https://online-quiz-9gez.onrender.com/student"
 ```
 
-`SECRET_KEY` is intentionally absent from `config.yaml` — it must be set via the environment (`.env` locally, dashboard env var on Render).
+`SECRET_KEY` and `MASTER_CODE` are intentionally absent from `config.yaml` — both must be set via the environment (`.env` locally, dashboard env vars on Render). The app refuses to start if either is missing.
 
 ## Questions Format
 

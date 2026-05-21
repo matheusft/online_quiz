@@ -56,14 +56,11 @@ Only non-secret values live in `config.yaml`:
 app:
   port: 8085            # local dev port, ignored on Render
 
-quiz:
-  master_code: "123"    # overridden by MASTER_CODE env var in production
-
 qr:
   public_url: "https://online-quiz-9gez.onrender.com/student"  # overridden by QR_PUBLIC_URL
 ```
 
-Do **not** add `secret_key` here — it must come from the environment.
+Do **not** add `SECRET_KEY` or `MASTER_CODE` here — both must come from the environment.
 
 ---
 
