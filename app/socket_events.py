@@ -66,8 +66,10 @@ def on_admin_auth(data):
     code = (data or {}).get("code", "")
     if code == config.quiz.master_code:
         join_room("admin")
+        qs.mark_admin(request.sid)  # remove admin from student count
         snap = qs.get_full_state_snapshot(for_admin=True)
         emit("auth_result", {"success": True, "state": snap})
+        _broadcast_student_stats()  # push corrected count to everyone
     else:
         emit("auth_result", {"success": False})
 
