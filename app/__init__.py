@@ -24,7 +24,16 @@ def create_app(config_path: str = None) -> Flask:
         config_path = os.path.join(base, "config", "config.yaml")
 
     config = load_config(config_path)
-    app.config["SECRET_KEY"] = config.app.secret_key
+
+    # Environment variables take precedence over config file values.
+    # Set SECRET_KEY, MASTER_CODE, and QR_PUBLIC_URL in the Render dashboard.
+    secret_key = os.environ.get("SECRET_KEY") or config.app.secret_key
+    if os.environ.get("MASTER_CODE"):
+        config.quiz.master_code = os.environ["MASTER_CODE"]
+    if os.environ.get("QR_PUBLIC_URL"):
+        config.qr.public_url = os.environ["QR_PUBLIC_URL"]
+
+    app.config["SECRET_KEY"] = secret_key
     app.config["APP_CONFIG"] = config
 
     # Load questions
