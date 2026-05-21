@@ -148,12 +148,16 @@ function applyState(state) {
     updateLiveCounts(state.live_counts);
   }
 
-  // Restore reveal if active
+  // Restore reveal or live bars
   if (state.answer_revealed && state.reveal_data) {
     renderRevealedResults(state.reveal_data);
     resultsPanel.classList.remove("hidden");
     revealBtn.classList.add("hidden");
     hideBtn.classList.remove("hidden");
+  } else if (state.live_counts && state.status !== "idle") {
+    renderLiveBars(state.live_counts);
+    revealBtn.classList.remove("hidden");
+    hideBtn.classList.add("hidden");
   } else {
     resultsPanel.classList.add("hidden");
     revealBtn.classList.remove("hidden");
@@ -175,7 +179,7 @@ function updateButtons(state) {
   pauseBtn.classList.toggle("hidden", status !== "active" && status !== "paused");
   resetBtn.classList.toggle("hidden", status === "idle");
   navControls.classList.toggle("hidden", status === "idle");
-  statsGroup.classList.toggle("hidden", status === "idle");
+  statsGroup.classList.toggle("hidden", status === "idle" || status === "paused");
 
   if (status === "paused") {
     pauseBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Resume`;
@@ -238,19 +242,80 @@ function updateCounters(online) {
 
 function updateLiveCounts(data) {
   if (!data) return;
-  const total = data.total_answers || 0;
+  const total  = data.total_answers || 0;
   const online = data.students_online || 0;
 
-  statAnswers.textContent = total;
-  statOnline.textContent  = online;
+  statAnswers.textContent   = total;
+  statOnline.textContent    = online;
   studentsCount.textContent = online;
 
   const pct = online > 0 ? Math.round((total / online) * 100) : 0;
-  responseRateFill.style.width = pct + "%";
+  responseRateFill.style.width  = pct + "%";
   responseRateLabel.textContent = `${pct}% responded`;
 
-  // Update question counter students
   if (currentState) currentState.students_online = online;
+
+  // Show live per-option bars during active quiz (before reveal)
+  if (currentState && !currentState.answer_revealed) {
+    renderLiveBars(data);
+  }
+}
+
+function renderLiveBars(data) {
+  const q = currentState?.question;
+  if (!q) return;
+
+  resultsBars.innerHTML = "";
+  freeResponsesList.innerHTML = "";
+
+  if (data.question_type === "multiple_choice" || data.counts !== undefined) {
+    freeResponsesList.classList.add("hidden");
+    resultsBars.classList.remove("hidden");
+    resultsPanel.classList.remove("hidden");
+
+    const counts  = data.counts || {};
+    const total   = data.total_answers || 0;
+    const options = q.options || [];
+    const letters = ["A", "B", "C", "D", "E", "F"];
+
+    options.forEach((opt, i) => {
+      const cnt = counts[String(i)] || 0;
+      const barPct = total > 0 ? Math.round((cnt / total) * 100) : 0;
+
+      const row = document.createElement("div");
+      row.className = "result-row";
+      row.innerHTML = `
+        <div class="result-label">
+          <span>${letters[i]}. ${escapeHtml(opt)}</span>
+          <span class="pct">${barPct}% <span class="count-val">(${cnt})</span></span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: ${barPct}%"></div>
+        </div>`;
+      resultsBars.appendChild(row);
+    });
+  } else {
+    // Free text — show scrolling list of responses
+    resultsBars.classList.add("hidden");
+    freeResponsesList.classList.remove("hidden");
+    if (total > 0) resultsPanel.classList.remove("hidden");
+
+    const responses = data.responses || [];
+    if (responses.length === 0) {
+      freeResponsesList.innerHTML = '<div class="free-response-chip" style="color:#94a3b8">No responses yet.</div>';
+    } else {
+      responses.forEach((r) => {
+        const chip = document.createElement("div");
+        chip.className = "free-response-chip";
+        if (r && typeof r === "object") {
+          chip.innerHTML = `<span>${escapeHtml(r.text)}</span>${r.count > 1 ? `<span class="chip-count">${r.count}</span>` : ""}`;
+        } else {
+          chip.textContent = r;
+        }
+        freeResponsesList.appendChild(chip);
+      });
+    }
+  }
 }
 
 function renderRevealedResults(data) {
