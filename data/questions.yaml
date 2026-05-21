@@ -1,0 +1,48 @@
+questions:
+  - id: 1
+    type: multiple_choice
+    text: "What is the capital of France?"
+    options:
+      - "Berlin"
+      - "Madrid"
+      - "Paris"
+      - "Rome"
+    correct: 2
+
+  - id: 2
+    type: multiple_choice
+    text: "Which data structure uses LIFO (Last In, First Out) ordering?"
+    options:
+      - "Queue"
+      - "Stack"
+      - "Linked List"
+      - "Hash Map"
+    correct: 1
+
+  - id: 3
+    type: multiple_choice
+    text: "What does HTTP stand for?"
+    options:
+      - "HyperText Transfer Protocol"
+      - "High Transfer Text Protocol"
+      - "HyperText Transmission Process"
+      - "Hyper Transfer Technology Protocol"
+    correct: 0
+
+  - id: 4
+    type: free_text
+    text: "In your own words, what is photosynthesis?"
+
+  - id: 5
+    type: multiple_choice
+    text: "What is the time complexity of binary search?"
+    options:
+      - "O(n)"
+      - "O(n²)"
+      - "O(log n)"
+      - "O(1)"
+    correct: 2
+
+  - id: 6
+    type: free_text
+    text: "What is one real-world application of machine learning you find most interesting?"
