@@ -99,7 +99,6 @@ socket.on("quiz_reset", () => {
   waitingTitle.textContent = "Quiz has been reset";
   waitingSub.textContent = "Waiting for the instructor to restart…";
   progressFooter.classList.add("hidden");
-  statsBar.classList.add("hidden");
 });
 
 socket.on("answer_accepted", () => {
@@ -109,6 +108,7 @@ socket.on("answer_accepted", () => {
 socket.on("student_stats", ({ students_online, total_answers }) => {
   statsOnline.textContent   = students_online ?? 0;
   statsAnswered.textContent = total_answers ?? 0;
+  statsBar.classList.remove("hidden");
 });
 
 // ── State application ─────────────────────────────────
@@ -127,11 +127,8 @@ function applyState(state) {
     waitingTitle.textContent = "Waiting for the quiz to start…";
     waitingSub.textContent = "Your instructor will begin shortly";
     progressFooter.classList.add("hidden");
-    statsBar.classList.add("hidden");
     return;
   }
-
-  statsBar.classList.remove("hidden");
 
   if (question) {
     lastKnownQuestion = question;
